@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: microserver-discovery-eureka
+  security:
+    basic:
+      enabled: true
+    user:
+      name: admin
+      password: admin123
+---
+spring:
+  profiles: peer1
+#  按需选择IP
+  cloud:
+    inetutils:
+      ignored-interfaces:
+        - docker0
+        - veth.*
+server:
+  port: 8761
+eureka:
+  instance:
+    hostname: peer1
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://admin:admin123@peer2:8762/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+---
+spring:
+  profiles: peer2
+server:
+  port: 8762
+eureka:
+  instance:
+    hostname: peer2
+  client:
+    service-url:
+      defaultZone: http://admin:admin123@peer1:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
